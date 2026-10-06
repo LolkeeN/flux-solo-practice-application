@@ -1,0 +1,66 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+env:
+  IMAGE_NAME: your-dockerhub-username/your-image-name
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Increment version
+        id: version
+        run: |
+          VERSION=$(cat VERSION)
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          PATCH=$((PATCH + 1))
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+
+          echo "$NEW_VERSION" > VERSION
+
+          echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+          echo "Version: $VERSION -> $NEW_VERSION"
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t "${IMAGE_NAME}:${{ steps.version.outputs.version }}" \
+            -t "${IMAGE_NAME}:latest" \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push "${IMAGE_NAME}:${{ steps.version.outputs.version }}"
+          docker push "${IMAGE_NAME}:latest"
+
+      - name: Commit new version
+        run: |
+          git add VERSION
+          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          git push
