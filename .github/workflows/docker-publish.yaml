@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 env:
-  IMAGE_NAME: your-dockerhub-username/your-image-name
+  IMAGE_NAME: lolkeenn/flux-solo-app
 
 jobs:
   build-and-publish:
