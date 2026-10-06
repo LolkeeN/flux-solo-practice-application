@@ -7,6 +7,7 @@ RUN ["sh", "-c", "echo Flask==3.1.2 > requirements.txt"]
 RUN ["sh", "-c", "pip3 install -r requirements.txt"]
 
 COPY app.py /app/app.py
+COPY VERSION /app/VERSION
 WORKDIR /app
 
 CMD ["python3", "app.py"]
