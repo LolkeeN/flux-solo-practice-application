@@ -2,13 +2,10 @@ from flask import Flask
 
 app = Flask(__name__)
 
-with open("VERSION", "r") as f:
-    VERSION = f.read().strip()
-
 
 @app.route("/", methods=["GET"])
 def hello():
-    return f"Hello World! v{VERSION}"
+    return f"Hello World!"
 
 
 if __name__ == "__main__":
