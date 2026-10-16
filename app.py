@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET"])
 def hello():
-    return f"Hello World! From knowledge sharing project x5"
+    return f"Hello World! From knowledge sharing project x6"
 
 
 if __name__ == "__main__":
